@@ -1,0 +1,3 @@
+Genfis partitionNum numEpochs numMFs trnRMSE2 chkRMSE2 trnRMSE3 chkRMSE3
+
+1 		200 		1000 		2 		0.3773 	0.3773 	0.7348 	0.7349
