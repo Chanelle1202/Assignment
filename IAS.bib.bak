@@ -1,0 +1,58 @@
+% This file was created with JabRef 2.10.
+% Encoding: Cp1252
+
+
+@Article{JangANFIS,
+  Title                    = {ANFIS: adaptive-network-based fuzzy inference system},
+  Author                   = {J. S. R. Jang},
+  Journal                  = {IEEE Transactions on Systems, Man, and Cybernetics},
+  Year                     = {1993},
+
+  Month                    = {May},
+  Number                   = {3},
+  Pages                    = {665-685},
+  Volume                   = {23},
+
+  Doi                      = {10.1109/21.256541},
+  ISSN                     = {0018-9472},
+  Keywords                 = {fuzzy logic;inference mechanisms;knowledge based systems;neural nets;signal processing;time series;ANFIS;adaptive-network-based fuzzy inference system;artificial neural networks;automatic control;chaotic time series;control system;fuzzy if-then rules;fuzzy modeling;human knowledge;hybrid learning procedure;input-output data pairs;input-output mapping;nonlinear functions;signal processing;Adaptive systems;Artificial neural networks;Automatic control;Chaos;Control system synthesis;Fuzzy neural networks;Fuzzy systems;Humans;Nonlinear control systems;Predictive models},
+  Owner                    = {cl15753},
+  Timestamp                = {2016.04.16}
+}
+
+@Misc{anfis1,
+  Title                    = {Mathworks - anfis1},
+  HowPublished             = {\url{http://uk.mathworks.com/help/fuzzy/anfis.html},
+[Accessed: 16/04/2016]},
+
+  Owner                    = {cl15753},
+  Timestamp                = {2016.04.16}
+}
+
+@Misc{ga,
+  Title                    = {Mathworks - ga},
+  HowPublished             = {\url{http://uk.mathworks.com/help/gads/ga.html?searchHighlight=ga},
+[Accessed: 16/04/2016]},
+
+  Owner                    = {cl15753},
+  Timestamp                = {2016.04.16}
+}
+
+@Misc{genfis1,
+  Title                    = {Mathworks - genfis1},
+  HowPublished             = {url{http://uk.mathworks.com/help/fuzzy/genfis1.html?searchHighlight=genfis1}, 
+[Accessed: 16/04/2016]},
+
+  Owner                    = {cl15753},
+  Timestamp                = {2016.04.16}
+}
+
+@Misc{genfis2,
+  Title                    = {Mathworks - genfis2},
+  HowPublished             = {\url{http://uk.mathworks.com/help/fuzzy/genfis2.html?searchHighlight=genfis2},
+[Accessed: 16/04/2016]},
+
+  Owner                    = {cl15753},
+  Timestamp                = {2016.04.16}
+}
+
