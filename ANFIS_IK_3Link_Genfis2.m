@@ -1,10 +1,8 @@
-function [ fitness ] = ANFIS_IK_3Link_Genfis2( radii_orig )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%% Three Link Arm - Genfis2
 
 l1=65; l2=155; l3=160; l5=100;
 
-partitionNum = 200;
+partitionNum = 50;
 
 theta2 = linspace(0, pi, partitionNum); % all possible theta2 values
 theta3 = linspace(-pi/2, 0, partitionNum); %Restricted theta3 values for elbow up configurations
@@ -31,7 +29,7 @@ validation_data4 = data4(2:2:end, :);
 
 %% Training
 
-radii = abs(round(radii_orig,1)); %Need to ensure the radii is to one dp and positive.
+radii = [0.5 0.5 0.5];
 
 theta2_radii = [0.5, 0.8, 0.2];
 theta3_radii = [0.4, 0.7, 0.5];
@@ -98,16 +96,16 @@ t=toc;
 %% Root Mean Square Error in Joint Space
 
 %Theta2
-trnOut2=evalfis(training_data2(:,1:2),training_fismat2);
-trnRMSE2=norm(trnOut2-training_data2(:,3))/sqrt(length(trnOut2));
-chkOut2=evalfis(validation_data2(:,1:2),validation_fismat2);
-chkRMSE2=norm(chkOut2-validation_data2(:,3))/sqrt(length(chkOut2));
+trnOut2=evalfis(training_data2(:,1:3),training_fismat2);
+trnRMSE2=norm(trnOut2-training_data2(:,4))/sqrt(length(trnOut2));
+chkOut2=evalfis(validation_data2(:,1:3),validation_fismat2);
+chkRMSE2=norm(chkOut2-validation_data2(:,4))/sqrt(length(chkOut2));
 
 %Theta3
-trnOut3=evalfis(training_data3(:,1:2),training_fismat3);
-trnRMSE3=norm(trnOut3-training_data3(:,3))/sqrt(length(trnOut3));
-chkOut3=evalfis(validation_data3(:,1:2),validation_fismat3);
-chkRMSE3=norm(chkOut3-validation_data3(:,3))/sqrt(length(chkOut3));
+trnOut3=evalfis(training_data3(:,1:3),training_fismat3);
+trnRMSE3=norm(trnOut3-training_data3(:,4))/sqrt(length(trnOut3));
+chkOut3=evalfis(validation_data3(:,1:3),validation_fismat3);
+chkRMSE3=norm(chkOut3-validation_data3(:,4))/sqrt(length(chkOut3));
 
 %Theta4
 trnOut4=evalfis(training_data4(:,1:3),training_fismat4);
@@ -127,9 +125,6 @@ cartesian_error = ((X_error).^2 + (Z_error).^2).^0.5;
 
 cartesian_errorRMSE = norm(cartesian_error)/sqrt(length(cartesian_error));
 
-fitness = cartesian_errorRMSE + 0.1*t;
+scatter(training_data4(:,4), cartesian_error);
 
-% stem3(training_data2(:,3), training_data3(:,3), cart_error);
-
-end
 
