@@ -4,19 +4,22 @@ function [ fitness ] = ANFIS_IK_3Link_Genfis2( radii_orig )
 
 l1=65; l2=155; l3=160; l5=100;
 
-theta2 = linspace(0, pi, 50); % all possible theta2 values
-theta3 = linspace(-pi/2, 0, 50); %all possible theta3 values
-theta4 = linspace(-pi/2, 0, 50); %all possible theta4 values
+partitionNum = 200;
+
+theta2 = linspace(0, pi, partitionNum); % all possible theta2 values
+theta3 = linspace(-pi/2, 0, partitionNum); %Restricted theta3 values for elbow up configurations
+theta4 = linspace(-pi/2, 0, partitionNum); %Restricted theta4 values for wrist up configurations
 
 [THETA2, THETA3, THETA4] = ndgrid(theta2, theta3, theta4); % generate a grid of theta values
 
 %Forward Kinematics Equations
 X = l3*cos(THETA2+THETA3)+l2*cos(THETA2)+l5*cos(THETA2+THETA3+THETA4);
-Z = l1 + l3*sin(THETA2+THETA3)+l2*sin(THETA2)+l5*sin(THETA2+THETA3+THETA4);
+Z = l1 + l3*sin(THETA2+THETA3)+l2*sin(THETA2)+l5*sin(THETA2+THETA3+THETA4); 
+B = -(THETA2+THETA3+THETA4); %Pitch constraint
 
-data2 = [X(:) Z(:) THETA2(:)]; 
-data3 = [X(:) Z(:) THETA3(:)]; 
-data4 = [X(:) Z(:) THETA4(:)]; 
+data2 = [X(:) Z(:) B(:) THETA2(:)]; 
+data3 = [X(:) Z(:) B(:) THETA3(:)]; 
+data4 = [X(:) Z(:) B(:) THETA4(:)]; 
 
 training_data2 = data2(1:2:end,:);
 training_data3 = data3(1:2:end,:);

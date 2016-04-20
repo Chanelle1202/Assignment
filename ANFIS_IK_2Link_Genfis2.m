@@ -6,7 +6,7 @@ function [fitness] = ANFIS_IK_2Link_Genfis2(radii_orig)
 %% Training data for ANFIS inverse kinematics system
 l1=65; l2=155; l3=160;
 
-partitionNum = 50;
+partitionNum = 200;
 
 theta2 = linspace(0, pi, partitionNum); % all possible theta2 values
 theta3 = linspace(-pi/2,0, partitionNum); %all possible theta3 values
