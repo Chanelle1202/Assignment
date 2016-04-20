@@ -1,44 +1,45 @@
-function [fitness] = ANFIS_IK_2Link_Genfis2(radii_orig)
-%UNTITLED4 Summary of this function goes here
+function [ fitness ] = ANFIS_IK_3Link_Genfis2( radii_orig )
+%UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
+l1=65; l2=155; l3=160; l5=100;
 
-%% Training data for ANFIS inverse kinematics system
-l1=65; l2=155; l3=160;
+theta2 = linspace(0, pi, 50); % all possible theta2 values
+theta3 = linspace(-pi/2, 0, 50); %all possible theta3 values
+theta4 = linspace(-pi/2, 0, 50); %all possible theta4 values
 
-partitionNum = 50;
-
-theta2 = linspace(0, pi, partitionNum); % all possible theta2 values
-theta3 = linspace(-pi/2,0, partitionNum); %all possible theta3 values
-
-[THETA2, THETA3] = ndgrid(theta2, theta3); % generate a grid of theta values
+[THETA2, THETA3, THETA4] = ndgrid(theta2, theta3, theta4); % generate a grid of theta values
 
 %Forward Kinematics Equations
-X = l3*cos(THETA2+THETA3)+l2*cos(THETA2);
-Z = l1 + l3*sin(THETA2+THETA3)+l2*sin(THETA2);
+X = l3*cos(THETA2+THETA3)+l2*cos(THETA2)+l5*cos(THETA2+THETA3+THETA4);
+Z = l1 + l3*sin(THETA2+THETA3)+l2*sin(THETA2)+l5*sin(THETA2+THETA3+THETA4);
 
-data2 = [X(:) Z(:) THETA2(:)];
-data3 = [X(:) Z(:) THETA3(:)];
+data2 = [X(:) Z(:) THETA2(:)]; 
+data3 = [X(:) Z(:) THETA3(:)]; 
+data4 = [X(:) Z(:) THETA4(:)]; 
 
 training_data2 = data2(1:2:end,:);
 training_data3 = data3(1:2:end,:);
+training_data4 = data4(1:2:end,:);
 
-validation_data2 = data2(2:2:end, :);
-validation_data3 = data3(2:2:end, :);
+validation_data2 = data2(2:2:end, :); 
+validation_data3 = data3(2:2:end, :); 
+validation_data4 = data4(2:2:end, :); 
 
 %% Training
 
 radii = abs(round(radii_orig,1)); %Need to ensure the radii is to one dp and positive.
 
-theta2_radii = [radii(1), radii(2), radii(3)];
-theta3_radii = [radii(4), radii(5), radii(6)];
+theta2_radii = [0.5, 0.8, 0.2];
+theta3_radii = [0.4, 0.7, 0.5];
+theta4_radii = [radii(1), radii(2), radii(3)];
 
 tic;
 
 %Genfis2
 input_fismat2 = genfis2(training_data2(:,1:2), training_data2(:,3), theta2_radii);
 input_fismat3 = genfis2(training_data3(:,1:2), training_data3(:,3), theta3_radii);
-
+input_fismat4 = genfis2(training_data4(:,1:2), training_data4(:,3), theta4_radii);
 
 %ANFIS
 
@@ -49,6 +50,9 @@ fprintf('-->%s\n','Start training theta2 ANFIS network.')
 
 fprintf('-->%s\n','Start training theta3 ANFIS network.')
 [training_fismat3,trnErr3,ss3,validation_fismat3,valErr3]=anfis(training_data3,input_fismat3,numEpochs,[0,0,0,0],validation_data3); % train third ANFIS network
+
+fprintf('-->%s\n','Start training theta4 ANFIS network.')
+[training_fismat4,trnErr4,ss4,validation_fismat4,valErr4]=anfis(training_data4,input_fismat4,numEpochs,[1,1,1,1],validation_data4); % train fourth ANFIS network
 
 fprintf('-->%s\n','Finished training networks.')
 
@@ -78,6 +82,15 @@ t=toc;
 % xlabel('Epochs')
 % legend('training','validation')
 
+% theta4
+% subplot(1,3,3);
+% plot(epochs, trnErr4, epochs, valErr4)
+% 
+% title('Theta4')
+% ylabel('Error')
+% xlabel('Epochs')
+% legend('training','validation')
+
 
 %% Root Mean Square Error in Joint Space
 
@@ -93,10 +106,16 @@ trnRMSE3=norm(trnOut3-training_data3(:,3))/sqrt(length(trnOut3));
 chkOut3=evalfis(validation_data3(:,1:2),validation_fismat3);
 chkRMSE3=norm(chkOut3-validation_data3(:,3))/sqrt(length(chkOut3));
 
+%Theta4
+trnOut4=evalfis(training_data4(:,1:3),training_fismat4);
+trnRMSE4=norm(trnOut4-training_data4(:,4))/sqrt(length(trnOut4));
+chkOut4=evalfis(validation_data4(:,1:3),validation_fismat4);
+chkRMSE4=norm(chkOut4-validation_data4(:,4))/sqrt(length(chkOut4));
+
 %% Errors in Cartesian Space for Theta2
 
-X_out = l3*cos(chkOut2+chkOut3)+l2*cos(chkOut2);
-Z_out = l1 + l3*sin(chkOut2+chkOut3)+l2*sin(chkOut2);
+X_out = l3*cos(chkOut2+chkOut3)+l2*cos(chkOut2)+l5*cos(chkOut2+chkOut3+chkOut4);
+Z_out = l1 + l3*sin(chkOut2+chkOut3)+l2*sin(chkOut2)+l5*sin(chkOut2+chkOut3+chkOut4);
 
 X_error = X_out - validation_data2(:,1);
 Z_error = Z_out - validation_data2(:,2);
@@ -105,7 +124,7 @@ cartesian_error = ((X_error).^2 + (Z_error).^2).^0.5;
 
 cartesian_errorRMSE = norm(cartesian_error)/sqrt(length(cartesian_error));
 
-fitness = cartesian_errorRMSE; % + 0.1*t;
+fitness = cartesian_errorRMSE + 0.1*t;
 
 % stem3(training_data2(:,3), training_data3(:,3), cart_error);
 

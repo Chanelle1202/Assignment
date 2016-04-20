@@ -5,9 +5,9 @@ clc
 
 l1=65; l2=155; l3=160; l5=100;
 
-theta2 = linspace(0, pi, 20); % all possible theta2 values
-theta3 = linspace(0, pi, 20); %all possible theta3 values
-theta4 = linspace(-pi/2, pi/2, 20); %all possible theta4 values
+theta2 = linspace(0, pi, 50); % all possible theta2 values
+theta3 = linspace(-pi/2, 0, 50); %all possible theta3 values
+theta4 = linspace(-pi/2, 0, 50); %all possible theta4 values
 
 [THETA2, THETA3, THETA4] = ndgrid(theta2, theta3, theta4); % generate a grid of theta values
 
@@ -57,37 +57,37 @@ fprintf('-->%s\n','Finished training networks.')
 %% Checking Errors for Over/Underfitting
 
 
-epochs = 1:numEpochs;
-
-figure(1) % new figure
-title('Training vs Validation Error - 3LinkGenfis150Thetas100Epochs3MFs');
-
-%theta2
-subplot(1,3,1);
-plot(epochs, trnErr2, epochs, valErr2)
-
-title('Theta2')
-ylabel('Error')
-xlabel('Epochs')
-legend('training','validation')
-
-%theta3
-subplot(1,3,2);
-plot(epochs, trnErr3, epochs, valErr3)
-
-title('Theta3')
-ylabel('Error')
-xlabel('Epochs')
-legend('training','validation')
-
-%theta4
-subplot(1,3,3);
-plot(epochs, trnErr4, epochs, valErr4)
-
-title('Theta4')
-ylabel('Error')
-xlabel('Epochs')
-legend('training','validation')
+% epochs = 1:numEpochs;
+% 
+% figure(1) % new figure
+% title('Training vs Validation Error - 3LinkGenfis150Thetas100Epochs3MFs');
+% 
+% theta2
+% subplot(1,3,1);
+% plot(epochs, trnErr2, epochs, valErr2)
+% 
+% title('Theta2')
+% ylabel('Error')
+% xlabel('Epochs')
+% legend('training','validation')
+% 
+% theta3
+% subplot(1,3,2);
+% plot(epochs, trnErr3, epochs, valErr3)
+% 
+% title('Theta3')
+% ylabel('Error')
+% xlabel('Epochs')
+% legend('training','validation')
+% 
+% theta4
+% subplot(1,3,3);
+% plot(epochs, trnErr4, epochs, valErr4)
+% 
+% title('Theta4')
+% ylabel('Error')
+% xlabel('Epochs')
+% legend('training','validation')
 
 %% Using evalfis to evaluate the trained system
 
