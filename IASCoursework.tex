@@ -41,13 +41,14 @@ For this section, the Lynxmotion arm will be reduced the to the two link problem
 When the experiments were first run there were very large errors in the Cartesian and joint space (Table.\ref{tab:range})\footnote{Genfis1 with two membership functions, 100 data points and 500 epochs.} and this was discovered to be because the range $\theta_3$ was set to $\left[-\pi/2,\pi/2\right]$, This meant that for each point in Cartesian space there were two possible solutions in the joint space with either a positive or negative value for $\theta_3$. This corresponded to the fact that each point in Cartesian space can be reached by the end effector in one of two configurations; elbow up or elbow down. This was solved by limiting the range of $\theta_3$ to only negative values, i.e. limiting the robotic arm to only elbow down configurations, which is much more realistic in terms of the Lynxmotion arm's capabilities.
 
 \begin{table}
+\begin{center}
 \scalebox{0.7}{
 \begin{tabular}{|c||c|c|c|c|c|c|c|}\hline
 $\theta_3$ range & trnRMSE2 & chkRMSE2 & trnRMSE3 & chkRMSE3 & cartRMSE & cartMin & cartMax\\ \hline\hline
 $\left[-\pi/2, \pi/2\right]$ & 0.3792 &  0.3794 &   0.7387  &  0.7389 &  35.7034  &  0.0497 &  99.4345\\ \hline
 $\left[-\pi/2, 0\right]$ & 0.0312 &   0.0311  &  0.0682 &   0.0687  &  5.5590  &  0.0651  & 111.7742 \\ \hline
 \end{tabular}}
-\caption{Results from changing range of $\theta_3$. \label{tab:range}}
+\caption{Results from changing range of $\theta_3$. \label{tab:range}}\end{center}
 \end{table}
 
 
@@ -81,13 +82,31 @@ To investigate the best parameters using Genfis1 to create the FIS two loops wer
 The results from this can be seen in Appendix 1, Table \ref{tab:2LinkGenfis1}; the last half of the two hundred data
 
 \subsubsection{Number of Membership Functions}
-The number of membership functions is used by genfis1 to set the number of membership functions of each variable in the FIS \cite{genfis1}. This is important to explore as more membership functions can lead to an increase in accuracy due to a greater capacity for complexity, much like increasing the degree of a polynomial line of best fit. However, too great a capacity for complexity can lead to over-fitting, where the system has been trained so well on the training data, that it is unable to generalise in the areas in between. To continue the polynomial line of best fit example, this would be analogous to increasing the degree of the line of best fit until it passes through every given data point, but in doing so losing the overall shape of the data being described. In order to check for over-fitting, validation data is used so that the error at points not in the training set can be monitored. Then over-fitting can be identified as where the error at training points drops to near zero, but the error at validation points begins to climb, see Figure.\ref{fig:Overfitting}. A countermeasure against over-fitting is to increase the density of the training data, as seen in Figure.\ref{fig:Genfis1}
+The number of membership functions is used by genfis1 to set the number of membership functions of each variable in the FIS \cite{genfis1}. This is important to explore as more membership functions can lead to an increase in accuracy due to a greater capacity for complexity, much like increasing the degree of a polynomial line of best fit. However, too great a capacity for complexity can lead to over-fitting, where the system has been trained so well on the training data, that it is unable to generalise in the areas in between. To continue the polynomial line of best fit example, this would be analogous to increasing the degree of the line of best fit until it passes through every given data point, but in doing so losing the overall shape of the data being described. In order to check for over-fitting, validation data is used so that the error at points not in the training set can be monitored. Then over-fitting can be identified as where the error at training points drops to near zero, but the error at validation points begins to climb, see Figure.\ref{fig:Overfitting}. A countermeasure against over-fitting is to increase the density of the training data, as seen in Figure.\ref{fig:Genfis1}, where the behaviour with different numbers of membership functions varies greatly with the density of the training data.
 \begin{figure}
 \includegraphics[width=\linewidth]{OverFitting.jpg}
 \caption{Example of Over-Fitting\label{fig:Overfitting}}
 \end{figure}
 
-Another repercussion of increasing membership functions is that this also increases the time the systems takes to train and so once again a balance needs to be struck between accuracy and efficiency.
+Another repercussion of increasing membership functions is that this also increases the time the systems takes to train and so once again a balance needs to be struck between accuracy and efficiency. Considering the results from Table \ref{tab:2LinkGenfis1} and displayed in Figure.\ref{fig:Genfis1}, it is clear that the most choosing the most efficient number of membership functions depends greatly on the density of the training data. Perhaps surprisingly, Table \ref{tab:mfs} shows that, for the training data densities experimented with, two membership functions performed the best in terms of Cartesian RMSE and time. This is mostly likely due to the negative effects of over-fitting at low training data densities.
+
+\begin{table} 
+\begin{center}
+\begin{tabular}{|c | c | c |} 
+\hline
+MFs &   Average cartRMSE & Average time \\ \hline \hline
+2 & 15.2 &    5.9 \\ \hline
+3 & 25.8 &   14.0 \\ \hline
+4 & 46.2 &   31.0 \\ \hline
+5 & 65.7 &   65.5 \\ \hline
+6 & 37.7 &  125.7 \\ \hline
+7 & 64.1 &  227.6 \\ \hline
+8 & 52.3 &  380.2 \\ \hline
+9 & 67.0 &  603.8 \\ \hline
+10 & 51.1 & 904.0 \\ \hline
+\end{tabular}
+\caption{The average Cartesian RMSE and time taken for each number of membership functions from Table \ref{tab:2LinkGenfis1} \label{tab:mfs}}\end{center}
+\end{table}
 
 \begin{figure}
 \includegraphics[width=\linewidth]{numMFs.jpg}
