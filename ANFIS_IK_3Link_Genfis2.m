@@ -4,13 +4,13 @@ l1=65; l2=155; l3=160; l5=100;
 
 partitionNum = 50;
 
-theta2 = linspace(0, pi, partitionNum); % all possible theta2 values
-theta3 = linspace(-pi/2, 0, partitionNum); %Restricted theta3 values for elbow up configurations
-theta4 = linspace(-pi/2, 0, partitionNum); %Restricted theta4 values for wrist up configurations
+% theta2 = linspace(0, pi, partitionNum); % all possible theta2 values
+% theta3 = linspace(-pi/2, 0, partitionNum); %Restricted theta3 values for elbow up configurations
+% theta4 = linspace(-pi/2, 0, partitionNum); %Restricted theta4 values for wrist up configurations
 
-% theta2 = linspace(0, 3*pi/4, partitionNum); % all possible theta2 values
-% theta3 = linspace(-3*pi/4, -pi/6, partitionNum); %Restricted theta3 values for elbow up configurations
-% theta4 = linspace(-3*pi/4, -pi/6, partitionNum); %Restricted theta4 values for wrist up configurations
+theta2 = linspace(0, 3*pi/4, partitionNum); % all possible theta2 values
+theta3 = linspace(-3*pi/4, -pi/6, partitionNum); %Restricted theta3 values for elbow up configurations
+theta4 = linspace(-3*pi/4, -pi/6, partitionNum); %Restricted theta4 values for wrist up configurations
 
 % theta2 = [linspace(0, pi/2, partitionNum*0.4), linspace(pi/2, pi, partitionNum*0.6)];
 % theta3 = [linspace(0, -0.3, partitionNum*0.3), linspace(-0.3, -1.3, partitionNum*0.2), linspace(-1.3, -pi/2,partitionNum*0.5)];

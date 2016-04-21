@@ -1,6 +1,7 @@
 \documentclass[11.5pt, twoside, a4paper]{article}
 \usepackage{graphicx, amssymb, amsmath, amsthm, xfrac, mathabx, upgreek, fancyhdr, float, underscore, url}
 \usepackage[section]{placeins}
+\usepackage[]{mcode}
 
 \begin{document}
 
@@ -136,7 +137,7 @@ Time problems were experienced using the genetic algorithm, as the time taken fo
 \end{figure}
 
 \subsection{Concluding Remarks}
-Although genfis1 performed much better for accuracy and time for the planar RR arm, \cite{faq} states that, because genfis1 relies upon grid partitioning it is more susceptible to `the curse of dimensionality'. This suggests that genfis1 would struggle with the planar RRR arm and even more so with the full Lynxmotion Arm. Also, as discussed in Section \ref{sec:GA}, the results of the genetic algorithm were not ideal and so genfis2 could perform much better than witnessed. Thus genfis2 is the method to be carried forwards to the planar RRR problem. 
+Although genfis1 performed much better for accuracy and time for the planar RR arm, \cite{faq} states that, because genfis1 relies upon grid partitioning it is more susceptible to `the curse of dimensionality'. This suggests that genfis1 would struggle with the planar RRR arm and even more so with the full Lynxmotion Arm. Also, as discussed in Section \ref{sec:GA}, the results of the genetic algorithm were not ideal and so genfis2 could perform much better than witnessed. Thus, genfis2 is the method to be carried forwards to the planar RRR problem. 
 
 \section{Planar RRR Arm}
 
@@ -156,17 +157,17 @@ In order to determine suitable radii values for constructing the FIS structure f
 \item Keeping the radii values for $\theta_2$ and $\theta_3$ the same and setting $\theta_4$ as a mix of the two.
 \item Keeping the radii values for $\theta_2$, but setting $\theta_4$ to the previous values of $\theta_3$ and $\theta_3$ as a mix of the two. This was based on the thinking that as $\theta_3$ was in fact the new angle to learn, as the planar RR arm had no joint attached to other joints at both ends.
 \end{enumerate}
-The results of these experiments can be seen in Table \ref{tab:situations}.
+The results of these experiments can be seen in Table \ref{tab:situations} with the radius for the pitch set to the default of 0.5. The best performance was from the third set of radii values, and this is most likely due to the significant decrease in the validation RMSE in $\theta_4$. Although surprisingly this was not the case for the reduction in validation RMSE for $\theta_3$ for the fourth set of radii values.
 
 \begin{table} 
 \begin{center}
 \begin{tabular}{|c | c | c | c | c| c|} 
 \hline
 Situation &   cartRMSE & time & chkRMSE2 & chkRMSE3 & chkRMSE4 \\ \hline \hline
-1 & 24.09 & 2776& 0.0731& 0.0661& 0.0353 \\ \hline
-2 & 13.00 & 1144& 0.0451& 0.0781& 0.0353 \\ \hline
-3 & 00.00 & 0000& 000000& 000000& 000000 \\ \hline % Need to fill in this line!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-4 & 13.02 & 2391& 0.0442& 0.0603& 0.0416 \\ \hline
+1 & 24.09 & 2776 & 0.0731& 0.0661& 0.0353 \\ \hline
+2 & 13.00 & 1144 & 0.0451& 0.0781& 0.0353 \\ \hline
+3 & 12.65 & 2504 & 0.0442& 0.0750& 0.0283 \\ \hline
+4 & 13.02 & 2391 & 0.0442& 0.0603& 0.0416 \\ \hline
 \end{tabular}
 \caption{Results for Planar RRR Arm in the Four Situations Specified \label{tab:situations}}
 \end{center}
@@ -175,14 +176,14 @@ Situation &   cartRMSE & time & chkRMSE2 & chkRMSE3 & chkRMSE4 \\ \hline \hline
 
 \subsection{Spread of Training Data} \label{sec:spread}
 
-So far the data points for training and validation have been sampled uniformly across the ranges of the joint angles; however, if the sampling of the data points was concentrated more heavily in the areas producing the most errors, accuracy could be increased. The first step is to identify the regions in the joint space causing the greatest errors in the catesian space. From Figure.\ref{fig:carterrors}, this is identified;
+So far the data points for training and validation have been sampled uniformly across the ranges of the joint angles; however, if the sampling of the data points was concentrated more heavily in the areas producing the most errors, the accuracy could be increased. The first step is to identify the regions in the joint space causing the greatest errors in the Cartesian space. From Figure.\ref{fig:carterrors}, these are identified as;
 \begin{itemize}
-\item $\left[\frac{\pi}{2}, \pi\right]$ for $\theta_2$, 
-\item $\left[-1.3, \frac{-\pi}{2}\right]$ for $\theta_3$, 
-\item $\left[\frac{-pi}{4}, \frac{\pi}{2}\right]$ for $\theta_4$.
+\item $\theta_2 = \pi$, 
+\item $\theta_3 = 0$, $\theta_3=\frac{-pi}{2}$, and, 
+\item $\theta_4 = 0$.
 \end{itemize}
 
-Unfortunately, as can be seen in Figure.\ref{fig:spread} the accuracy did not improve and did in fact worsen; in the regions with the concentrated sampling the errors hardly improves, whilst in the sparser regions the errors grew. Although disappointing, this is believed to be due the already sparseness of the data points and essentially there not being enough to favour any region and it not seriously hamper the effectiveness in another.
+Unfortunately, as can be seen in Figure.\ref{fig:spread} the accuracy did not improve and did in fact worsen; in the regions with the concentrated sampling the errors do improve, but in the sparser regions the errors grew. Although disappointing, this is believed to be due the already sparseness of the data points and essentially there not being enough to favour any region and it not seriously hamper the effectiveness in another.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{cartesianerrorsTHETA.jpg}
@@ -194,26 +195,39 @@ Unfortunately, as can be seen in Figure.\ref{fig:spread} the accuracy did not im
 \caption{Cartesian RMSE in Joint Space after Change of Spread\label{fig:spread}}
 \end{figure}
 
-\subsection{Changing Joint Angle Ranges} %Are these singularities
+\subsection{Changing Joint Angle Ranges}
 
-Another possible method to reduce the Cartesian error is to either remove the troublesome regions identified in Section \ref{sec:spread} or possibly, where they present a boundary to the region, extend the region beyond them in the hopes that performing training either side will reduce the overall error. %grr not written well
+Another method to reduce the Cartesian RMSE is to either remove the singularities identified in Section \ref{sec:spread} or possibly, where they present a boundary to the region, extend the region beyond them in the hopes that performing training either side will reduce the overall error. Figure.\ref{fig:rangereduce} shows the results of cropping the singularities from the joint space, but, although this method achieved a much better Cartesian RMSE of 4.38mm, it has not truly solved the issue of these troublesome regions, just ignored them. It is a worthy method to consider though, as if the robot arm only needs a limited workspace, then training across singularities when it is unnecessary is pointless. 
 
-JointSpace Reduced and Joint Ranges
-
-
-9.217585601246698 5422 0.016326829669281, 0.045720705451220, 0.014564390880451
+\begin{figure}
+\includegraphics[width=\linewidth]{ReducedRanges.jpg}
+\caption{Cartesian RMSE in Joint Space after Reducing Joint Space Ranges\label{fig:rangereduce}}
+\end{figure}
 
 \section{Lynxmotion Arm}
 
+In order to turn the planar RRR arm to a representation of the Lynxmotion robotic arm another variable $\theta_1$, the rotation around the z-axis, is needed. As $\theta_1$ only affects behaviour on the XY-plane it is unnecessary to train it upon Z and the pitch and similarly, there is no need to train $\theta_2$, $\theta_3$ or $\theta_4$ on Y. As such the  Limiting the input for the training of each angle to only what is necessary could help mitigate the scalability issues caused by the additional dimension. Unfortunately, keeping a training data density of fifty data points proved infeasible in the time frame and so this was reduced to just twenty data points.
+
+A control run setting all the radii values to the default resulted in a disappointing Cartesian RMSE of 436.2mm with some errors reaching 800mm, with the validation error for $\theta_2$, $\theta_3$ and $\theta_4$ a magnitude higher than for the planar RRR arm. This is most likely due to the reduction in training data density. For the final run with the radii values for $\theta_1$ set to the default 0.5 and those for the other angles the same as for the planar RRR arm, the Cartesian RMSE error was 436.17mm and once again the validation RMSE is a magnitude higher than for the planar RRR arm.
+
+Considering the membership functions of the FIS before and after training, it is disappointing to see that there is little change apart from for $\theta_4$, implying that little training actually occurred. This is perhaps due to the low density of the training data.
+\begin{figure}
+\includegraphics[width=\linewidth]{MFsBefore.jpg}
+\caption{Membership Functions Before Training \label{fig:MFsBefore}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\linewidth]{MFsAfter.jpg}
+\caption{Membership Functions After Training \label{fig:MFsAfter}}
+\end{figure}
 
 
 
+\section{Conclusion}
+In conclusion, this report has explored the task of using ANFIS to calculate the inverse kinematics of the Lynxmotion Arm. Although the accuracy of the final method used is not idea, it is felt that, if the available time had been used more wisely to fully explore all the methods mentioned in the report, far better results could have been obtained.
 
 
-
-
-
-\section{Appendix 1 - Experiment Result Tables Overflow}
+\section{Appendix 1 - Experiment Results}
 
 \begin{table} 
 \scalebox{0.7}{
@@ -265,7 +279,13 @@ dataPoints & Epochs & MFs & trnRMSE2 & chkRMSE2 & trnRMSE3 & chkRMSE3 & cartRMSE
 \caption{Planar RR Arm - Genfis1 Parameter Experiment \label{tab:2LinkGenfis1}}
 \end{table}
 
+\section{Appendix 2 - Matlab Code}
 
+\lstinputlisting{AnfisFullArm.m}
+\lstinputlisting{ThreeArmGenfis2.m}
+\lstinputlisting{TwoArmGenfis1.m}
+\lstinputlisting{TwoArmGenfis2.m}
+\lstinputlisting{TwoArmGenfis2GA.m}
 
 \bibliographystyle{unsrt}
 \bibliography{IAS}{}

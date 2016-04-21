@@ -6,10 +6,10 @@ clc
 l1=65; l2=155; l3=160; l5=100;
 
 
-theta1 = linspace(-pi/2, pi/2, 50); % all possible theta1 values
-theta2 = linspace(0, pi, 50); % all possible theta2 values
-theta3 = linspace(-pi/2, 0, 50); %all possible theta3 values
-theta4 = linspace(-pi/2, 0, 50); %all possible theta4 values
+theta1 = linspace(-pi/2, pi/2, 20); % all possible theta1 values
+theta2 = linspace(0, pi, 20); % all possible theta2 values
+theta3 = linspace(-pi/2, 0, 20); %all possible theta3 values
+theta4 = linspace(-pi/2, 0, 20); %all possible theta4 values
 
 
 [THETA1, THETA2, THETA3, THETA4] = ndgrid(theta1, theta2, theta3, theta4); % generate a grid of theta values
@@ -22,9 +22,9 @@ Z = l1 + l3*sin(THETA2+THETA3)+l2*sin(THETA2)+l5*sin(THETA2+THETA3+THETA4);
 B = -(THETA2+THETA3+THETA4);
 
 data1 = [X(:) Y(:) THETA1(:)]; % create x-y-theta1 dataset
-data2 = [X(:) Z(:) B(:) THETA2(:)]; % create x-y-theta2 dataset
-data3 = [X(:) Z(:) B(:) THETA3(:)]; % create x-y-theta3 dataset
-data4 = [X(:) Z(:) B(:) THETA4(:)]; % create x-y-theta4 dataset
+data2 = [X(:) Z(:) B(:) THETA2(:)]; % create x-z-b-theta2 dataset
+data3 = [X(:) Z(:) B(:) THETA3(:)]; % create x-y-b-theta3 dataset
+data4 = [X(:) Z(:) B(:) THETA4(:)]; % create x-y-b-theta4 dataset
 
 training_data1 = data1(1:2:end,:);
 training_data2 = data2(1:2:end,:);
@@ -40,9 +40,9 @@ validation_data4 = data4(2:2:end, :); % create x-y-theta4 dataset
 %% Training
 
 theta1_radii = 0.5;
-theta2_radii = 0.5;
-theta3_radii = 0.5;
-theta4_radii = 0.5;
+theta2_radii = [0.5, 0.8, 0.5, 0.2];
+theta3_radii = [0.4, 0.7, 0.5, 0.5];
+theta4_radii = [0.5, 0.7, 0.5, 0.3];
 
 tic;
 
@@ -51,9 +51,6 @@ input_fismat1 = genfis2(training_data1(:,1:2), training_data1(:,3), theta1_radii
 input_fismat2 = genfis2(training_data2(:,1:3), training_data2(:,4), theta2_radii);
 input_fismat3 = genfis2(training_data3(:,1:3), training_data3(:,4), theta3_radii);
 input_fismat4 = genfis2(training_data4(:,1:3), training_data4(:,4), theta4_radii);
-
-
-
 
 
 %ANFIS
@@ -73,29 +70,29 @@ fprintf('-->%s\n','Start training fourth ANFIS network.')
 
 t=toc;
 
-% Plot membership functions before training
+%% Plot membership functions before training
 figure(1)
 
 subplot(2, 2, 1)
-[ x1,mf1 ] = plotmf(fismat1,'input',1);
+[ x1,mf1 ] = plotmf(input_fismat1,'input',1);
 plot(x1,mf1);
 xlabel('');
 ylabel('Degree of Membership');
 
 subplot(2, 2, 2)
-[ x2,mf2 ] = plotmf(fismat2,'input',1);
+[ x2,mf2 ] = plotmf(input_fismat2,'input',1);
 plot(x2,mf2);
 xlabel('');
 ylabel('Degree of Membership');
 
 subplot(2, 2, 3)
-[ x3,mf3 ] = plotmf(fismat3,'input',1);
+[ x3,mf3 ] = plotmf(input_fismat3,'input',1);
 plot(x3,mf3);
 xlabel('');
 ylabel('Degree of Membership');
 
 subplot(2, 2, 4)
-[ x4,mf4 ] = plotmf(fismat4,'input',1);
+[ x4,mf4 ] = plotmf(input_fismat4,'input',1);
 plot(x4,mf4);
 xlabel('');
 ylabel('Degree of Membership');
@@ -151,7 +148,7 @@ xlabel('Epochs')
 legend('training','validation')
 
 %theta3
-subplot(2,2,2);
+subplot(2,2,3);
 plot(epochs, trnErr3, epochs, valErr3)
 
 title('Theta3')
@@ -172,31 +169,31 @@ legend('training','validation')
 %% Calculating the RMSE in Joint Space
 
 %Theta1
-trnOut1=evalfis(training_data1(:,1:4),training_fismat1);
-trnRMSE1=norm(trnOut1-training_data1(:,5))/sqrt(length(trnOut1));
-chkOut1=evalfis(validation_data1(:,1:4),validation_fismat1);
-chkRMSE1=norm(chkOut1-validation_data1(:,5))/sqrt(length(chkOut1));
+trnOut1=evalfis(training_data1(:,1:2),training_fismat1);
+trnRMSE1=norm(trnOut1-training_data1(:,3))/sqrt(length(trnOut1));
+chkOut1=evalfis(validation_data1(:,1:2),validation_fismat1);
+chkRMSE1=norm(chkOut1-validation_data1(:,3))/sqrt(length(chkOut1));
 
 %Theta2
-trnOut2=evalfis(training_data2(:,1:4),training_fismat2);
-trnRMSE2=norm(trnOut2-training_data2(:,5))/sqrt(length(trnOut2));
-chkOut2=evalfis(validation_data2(:,1:4),validation_fismat2);
-chkRMSE2=norm(chkOut2-validation_data2(:,5))/sqrt(length(chkOut2));
+trnOut2=evalfis(training_data2(:,1:3),training_fismat2);
+trnRMSE2=norm(trnOut2-training_data2(:,4))/sqrt(length(trnOut2));
+chkOut2=evalfis(validation_data2(:,1:3),validation_fismat2);
+chkRMSE2=norm(chkOut2-validation_data2(:,4))/sqrt(length(chkOut2));
 
 %Theta1
-trnOut3=evalfis(training_data3(:,1:4),training_fismat3);
-trnRMSE3=norm(trnOut3-training_data3(:,5))/sqrt(length(trnOut3));
-chkOut3=evalfis(validation_data3(:,1:4),validation_fismat3);
-chkRMSE3=norm(chkOut3-validation_data3(:,5))/sqrt(length(chkOut3));
+trnOut3=evalfis(training_data3(:,1:3),training_fismat3);
+trnRMSE3=norm(trnOut3-training_data3(:,4))/sqrt(length(trnOut3));
+chkOut3=evalfis(validation_data3(:,1:3),validation_fismat3);
+chkRMSE3=norm(chkOut3-validation_data3(:,4))/sqrt(length(chkOut3));
 
 %Theta1
-trnOut4=evalfis(training_data4(:,1:4),training_fismat4);
-trnRMSE4=norm(trnOut4-training_data4(:,5))/sqrt(length(trnOut4));
-chkOut4=evalfis(validation_data4(:,1:4),validation_fismat4);
-chkRMSE4=norm(chkOut4-validation_data4(:,5))/sqrt(length(chkOut4));
+trnOut4=evalfis(training_data4(:,1:3),training_fismat4);
+trnRMSE4=norm(trnOut4-training_data4(:,4))/sqrt(length(trnOut4));
+chkOut4=evalfis(validation_data4(:,1:3),validation_fismat4);
+chkRMSE4=norm(chkOut4-validation_data4(:,4))/sqrt(length(chkOut4));
 
 
-%% Errors in Cartesian Space for Theta2
+%% Errors in Cartesian Space
 
 X_out = cos(chkOut1).*(l3*cos(chkOut2+chkOut3)+l2*cos(chkOut2)+l5*cos(chkOut2+chkOut3+chkOut4));
 Y_out = sin(chkOut1).*(l3*cos(chkOut2+chkOut3)+l2*cos(chkOut2)+l5*cos(chkOut2+chkOut3+chkOut4));
@@ -212,7 +209,7 @@ cartesian_errorRMSE = norm(cartesian_error)/sqrt(length(cartesian_error));
 
 figure(4)
 subplot(2, 2, 1)
-scatter(training_data1(:,4), cartesian_error, 5);
+scatter(training_data1(:,3), cartesian_error, 5);
 xlabel('Theta1 values (radians)');
 
 subplot(2, 2, 2)
