@@ -21,10 +21,10 @@ Y = sin(THETA1).*(l3*cos(THETA2+THETA3)+l2*cos(THETA2)+l5*cos(THETA2+THETA3+THET
 Z = l1 + l3*sin(THETA2+THETA3)+l2*sin(THETA2)+l5*sin(THETA2+THETA3+THETA4);
 B = -(THETA2+THETA3+THETA4);
 
-data1 = [X(:) Y(:) Z(:) B(:) THETA1(:)]; % create x-y-theta1 dataset
-data2 = [X(:) Y(:) Z(:) B(:) THETA2(:)]; % create x-y-theta2 dataset
-data3 = [X(:) Y(:) Z(:) B(:) THETA3(:)]; % create x-y-theta3 dataset
-data4 = [X(:) Y(:) Z(:) B(:) THETA4(:)]; % create x-y-theta4 dataset
+data1 = [X(:) Y(:) THETA1(:)]; % create x-y-theta1 dataset
+data2 = [X(:) Z(:) B(:) THETA2(:)]; % create x-y-theta2 dataset
+data3 = [X(:) Z(:) B(:) THETA3(:)]; % create x-y-theta3 dataset
+data4 = [X(:) Z(:) B(:) THETA4(:)]; % create x-y-theta4 dataset
 
 training_data1 = data1(1:2:end,:);
 training_data2 = data2(1:2:end,:);
@@ -39,18 +39,18 @@ validation_data4 = data4(2:2:end, :); % create x-y-theta4 dataset
 
 %% Training
 
-theta1_radii = [0.5, 0.5, 0.7, 0.5, 0.3];
-theta2_radii = [0.5, 0.5, 0.8, 0.5, 0.2];
-theta3_radii = [0.4, 0.5, 0.7, 0.5, 0.3];
-theta4_radii = [0.5, 0.5, 0.7, 0.5, 0.3];
+theta1_radii = 0.5;
+theta2_radii = 0.5;
+theta3_radii = 0.5;
+theta4_radii = 0.5;
 
 tic;
 
 %Genfis2
-input_fismat1 = genfis2(training_data1(:,1:4), training_data1(:,5), theta1_radii);
-input_fismat2 = genfis2(training_data2(:,1:4), training_data2(:,5), theta2_radii);
-input_fismat3 = genfis2(training_data3(:,1:4), training_data3(:,5), theta3_radii);
-input_fismat4 = genfis2(training_data4(:,1:4), training_data4(:,5), theta4_radii);
+input_fismat1 = genfis2(training_data1(:,1:2), training_data1(:,3), theta1_radii);
+input_fismat2 = genfis2(training_data2(:,1:3), training_data2(:,4), theta2_radii);
+input_fismat3 = genfis2(training_data3(:,1:3), training_data3(:,4), theta3_radii);
+input_fismat4 = genfis2(training_data4(:,1:3), training_data4(:,4), theta4_radii);
 
 
 
