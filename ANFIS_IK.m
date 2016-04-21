@@ -39,10 +39,10 @@ validation_data4 = data4(2:2:end, :); % create x-y-theta4 dataset
 
 %% Training
 
-theta1_radii = [];
-theta2_radii = [];
-theta3_radii = [];
-theta4_radii = [];
+theta1_radii = [0.5, 0.5, 0.7, 0.5, 0.3];
+theta2_radii = [0.5, 0.5, 0.8, 0.5, 0.2];
+theta3_radii = [0.4, 0.5, 0.7, 0.5, 0.3];
+theta4_radii = [0.5, 0.5, 0.7, 0.5, 0.3];
 
 tic;
 
@@ -52,6 +52,26 @@ input_fismat2 = genfis2(training_data2(:,1:4), training_data2(:,5), theta2_radii
 input_fismat3 = genfis2(training_data3(:,1:4), training_data3(:,5), theta3_radii);
 input_fismat4 = genfis2(training_data4(:,1:4), training_data4(:,5), theta4_radii);
 
+
+
+
+
+%ANFIS
+numEpochs = 500;
+
+fprintf('-->%s\n','Start training first ANFIS network.')
+[training_fismat1,trnErr1,ss1,validation_fismat1,valErr1]=anfis(training_data1,input_fismat1,numEpochs,[0,0,0,0],validation_data1); % train first ANFIS network
+
+fprintf('-->%s\n','Start training second ANFIS network.')
+[training_fismat2,trnErr2,ss2,validation_fismat2,valErr2]=anfis(training_data2,input_fismat2,numEpochs,[0,0,0,0],validation_data2); % train second ANFIS network
+
+fprintf('-->%s\n','Start training third ANFIS network.')
+[training_fismat3,trnErr3,ss3,validation_fismat3,valErr3]=anfis(training_data3,input_fismat3,numEpochs,[0,0,0,0],validation_data3); % train third ANFIS network
+
+fprintf('-->%s\n','Start training fourth ANFIS network.')
+[training_fismat4,trnErr4,ss4,validation_fismat4,valErr4]=anfis(training_data4,input_fismat4,numEpochs,[0,0,0,0],validation_data4); % train fourth ANFIS network
+
+t=toc;
 
 % Plot membership functions before training
 figure(1)
@@ -79,24 +99,6 @@ subplot(2, 2, 4)
 plot(x4,mf4);
 xlabel('');
 ylabel('Degree of Membership');
-
-
-%ANFIS
-numEpochs = 500;
-
-fprintf('-->%s\n','Start training first ANFIS network.')
-[training_fismat1,trnErr1,ss1,validation_fismat1,valErr1]=anfis(training_data1,input_fismat1,numEpochs,[0,0,0,0],validation_data1); % train first ANFIS network
-
-fprintf('-->%s\n','Start training second ANFIS network.')
-[training_fismat2,trnErr2,ss2,validation_fismat2,valErr2]=anfis(training_data2,input_fismat2,numEpochs,[0,0,0,0],validation_data2); % train second ANFIS network
-
-fprintf('-->%s\n','Start training third ANFIS network.')
-[training_fismat3,trnErr3,ss3,validation_fismat3,valErr3]=anfis(training_data3,input_fismat3,numEpochs,[0,0,0,0],validation_data3); % train third ANFIS network
-
-fprintf('-->%s\n','Start training fourth ANFIS network.')
-[training_fismat4,trnErr4,ss4,validation_fismat4,valErr4]=anfis(training_data4,input_fismat4,numEpochs,[0,0,0,0],validation_data4); % train fourth ANFIS network
-
-t=toc;
 
 % Plot membership functions after training
 figure(2)
