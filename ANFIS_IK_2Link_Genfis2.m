@@ -105,7 +105,7 @@ cartesian_error = ((X_error).^2 + (Z_error).^2).^0.5;
 
 cartesian_errorRMSE = norm(cartesian_error)/sqrt(length(cartesian_error));
 
-fitness = cartesian_errorRMSE; % + 0.1*t;
+fitness = cartesian_errorRMSE + 0.1*t;
 
 % stem3(training_data2(:,3), training_data3(:,3), cart_error);
 

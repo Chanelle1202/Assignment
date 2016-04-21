@@ -23,16 +23,16 @@ The task of this assignment is to use ANFIS to derive a representation of the in
 \item What should be the spread of the training data? Should the training data points be uniform over the workspace or concentrated near singularities?
 \end{enumerate}
 
- Due to time constraints, the simpler problem of a two link arm will be used to investigate the first three questions; as the data sets required to train the system are much smaller, and so more exploration of parameter settings of the ANFIS is achievable. Then, the best parameters found will be used to train for a three link arm and as the three link arm gives a planar representation of the Lynxmotion arm, the final question will be investigated. Finally, these findings will be implemented on the Lynxmotion arm and compared against analytical solutions.
+ Due to time constraints, the simpler problem of a planar RR arm will be used to investigate the first three questions; as the data sets required to train the system are much smaller, and so more exploration of parameter settings of the ANFIS is achievable. Then, the best parameters found will be used to train for a planar RRR arm and as the planar RRR arm gives a representation of the Lynxmotion arm in the XZ-plane, the final question will be investigated. Finally, these findings will be implemented on the Lynxmotion arm and compared against analytical solutions.
 
-\section{Two Link Arm} %should this be link or joint?
+\section{Planar RR Arm}
 
-For this section, the Lynxmotion arm will be reduced the to the two link problem as described in Fig.\ref{fig:2Link}\footnote{Altered to match findings in Section\ref{sec:elbowIssues}}. 
+For this section, the Lynxmotion arm will be reduced the to the planar RR problem as described in Fig.\ref{fig:2Link}\footnote{Altered to match findings in Section\ref{sec:elbowIssues}}. The input-output data pairs used to train and validate will be the joint angles $\theta_2$ and $\theta_3$ and their corresponding values in values in the XZ-plane.
 
 \begin{figure} %Might be a bit large
 \begin{center}
 \includegraphics{2Link.jpg}
-\caption{Two Link Robotic Arm \label{fig:2Link}}
+\caption{Planar RR Robotic Arm \label{fig:2Link}}
 \end{center}
 \end{figure}
 
@@ -53,11 +53,11 @@ $\left[-\pi/2, 0\right]$ & 0.0312 &   0.0311  &  0.0682 &   0.0687  &  5.5590  &
 
 
 \subsection{Number of Epochs}
-The number of epochs controls the length of time ANFIS spends tuning the membership functions of the Fuzzy Inference System (FIS) and setting this is a matter of comparing the accuracy attained against the time taken. In Fig.\ref{fig:2000Epochs}\footnote{Genfis1 with two membership functions and 100 data points} it is clear that if only the first fifty epochs are considered the training and validation errors of the joint angles are still falling and there is little evidence to show how far they might further fall, but when one thousand epochs are run there is clearly little improvement after five hundred epochs. Table.\ref{tab:epochs} also shows that the Root-Mean-Squared-Error (RMSE) in the Cartesian space reduces by less than a tenth of a millimetre from five hundred to one thousand epochs despite it taking twice as long to run. Interestingly, there is also little change in the Cartesian RMSE between one hundred epochs and five hundred epochs.. In conclusion, the best number of epochs to use for further experiments is five hundred as confidence can be had that training and validation errors in the joint angles have stabilised by this epoch, but there is little point continuing as neither the error in the joint angles or the Cartesian RMSE appear to decrease enough to be beneficial.
+The number of epochs controls the length of time ANFIS spends tuning the membership functions of the Fuzzy Inference System (FIS) and setting this is a matter of comparing the accuracy attained against the time taken. In Fig.\ref{fig:2000Epochs}\footnote{Genfis1 with two membership functions and 100 data points} it is clear that if only the first fifty epochs are considered the training and validation errors of the joint angles are still falling and there is little evidence to show how far they might further fall, but when one thousand epochs are run there is clearly little improvement after five hundred epochs. Table.\ref{tab:epochs} also shows that the Root-Mean-Squared-Error (RMSE) in the Cartesian space reduces by less than a tenth of a millimetre from five hundred to one thousand epochs despite it taking twice as long to run. Interestingly, there is also little change in the Cartesian RMSE between one hundred epochs and five hundred epochs. In conclusion, the best number of epochs to use for further experiments is five hundred as confidence can be had that training and validation errors in the joint angles have stabilised by this epoch, but there is little point continuing as neither the error in the joint angles or the Cartesian RMSE appear to decrease enough to be beneficial.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{Epochs.jpg}
-\caption{Two Link Arm with run for 50 and 1000 Epochs\label{fig:2000Epochs}}
+\caption{Planar RR Arm with run for 50 and 1000 Epochs\label{fig:2000Epochs}}
 \end{figure}
 
 \begin{table} 
@@ -115,53 +115,95 @@ MFs &   Average cartRMSE & Average time \\ \hline \hline
 
 \subsubsection{Density of Training Data}
 
-A limitation of ANFIS is that it uses supervised learning and as such needs training input-output data, which can be difficult to source for problems and for this task in particular the density of the training data can be a problem. 
+A limitation of ANFIS is that it uses supervised learning and as such needs training input-output data, which can be difficult to source for problems and the additional need for validation data only adds to this. Even with a problem such as this task, where finding input-output pairs is relatively easy using the forward kinematic equations, the density of training data is still an issue as it requires more time and computational power to train. On the other hand, the greater the density of the training data, the greater the accuracy due to less speculation needed to fill in the missing areas of information.
 
-\subsection{Optimising Genfis2}
-Genfis2 uses subtractive clustering to generate a Sugeno-type FIS structure \cite{genfis2} and in this experiment a genetic algorithm is used to try and determine optimal radii inputs for each joint. A genetic algorithm was chosen here, over any other type of optimisation algorithm, as it was feared that there would be many local optima, e.g. the optimal radius for each cluster. For the sake of convenience, Matlab's built in ga function was used for this experiment; with hard constraints set on the chromosome. However, as genfis2 only accepts radii to one decimal place and the population the ga produces is to four decimal places, the inputs are rounded before genfis2. As the aim of the genetic algorithm is to find the most efficient set of parameters, as opposed to the most accurate, the fitness function used to evaluate the performance of the chromosomes is the Cartesian RMSE mitigated by the time taken.
+As the planar RR problem is being used as a starting point for the planar RRR one, scalability also have to be considered. ANFIS suffers from the curse of dimensionality, in that adding even just one more variable, or dimension, to the problem can cause massive increase in the computing power and time needed to train the FIS. Considering all this and Figure.\ref{fig:Genfis1} having fifty data points appears to be a good trade off between accuracy and time. 
 
-Time problems were experienced using the genetic algorithm, as the time taken for each generation is the length of time for fitness function (in this case genfis2 and anfis) to run, multiplied by the population size. As such only a small population size of ten was used for this experiment and as such the genetic algorithm converged in a short space of time on a result which may not be globally optimal. In terms of practicality, the length of time necessary to compute the fitness function should in future be taken into account when considering the use of a genetic algorithm. Furthermore, the need to round the chromosomes from Matlab's built-in ga function, meant there was a lot of unnecessary variation within populations.
+\subsection{Optimising Genfis2} \label{sec:GA}
+Genfis2 uses subtractive clustering to generate a Sugeno-type FIS structure \cite{genfis2} and in this experiment a genetic algorithm is used to try and determine optimal radii inputs for each joint. A genetic algorithm was chosen here, over any other type of optimisation algorithm, as it was feared that there would be many local optima, e.g. the optimal radius for each cluster. For the sake of convenience, Matlab's built in ga function was used for this experiment; with hard constraints set on the chromosome. However, as genfis2 only accepts radii to one decimal place and the population the ga produces is to four decimal places, the inputs are rounded before genfis2. As the aim of the genetic algorithm is to find the most efficient set of parameters, as opposed to the most accurate, the original fitness function used to evaluate the performance of the chromosomes is the Cartesian RMSE mitigated by the time taken. Figure.\ref{fig:GA} displays the results\footnote{With fifty data points and five hundred epochs.} from the genetic algorithm and the best chromosome found corresponded to,
+\begin{equation*}
+\theta_2\text{ radii }= [0.5, 0.8, 0.2] \quad \& \quad \theta_3\text{ radii } = [0.4, 0.7,  0.5], 
+\end{equation*}
+which has a Cartesian RMSE of 3.35 and took 980 seconds.
 
-\section{Three Link Arm}
+Time problems were experienced using the genetic algorithm, as the time taken for each generation is the length of time for fitness function (in this case genfis2 and anfis) to run, multiplied by the population size. As such only a small population size of ten was used for this experiment and as such the genetic algorithm ended after a short number of generations on a result which may not be globally optimal. In terms of practicality, the length of time necessary to compute the fitness function should in future be taken into account when considering the use of a genetic algorithm. Furthermore, the need to round the chromosomes from Matlab's built-in ga function, meant there was a lot of unnecessary variation within the population.
 
-Need to have another constraint to balance the new variable, using the pitch.
+\begin{figure}
+\begin{center}
+\includegraphics[width=\linewidth]{GAResults.jpg}
+\caption{Genetic Algorithm Results for Genfis2 on Planar RR Arm\label{fig:GA}}
+\end{center}
+\end{figure}
 
-More partitions lead to better results but longer time frame especially the more complicated the system becomes.
+\subsection{Concluding Remarks}
+Although genfis1 performed much better for accuracy and time for the planar RR arm, \cite{faq} states that, because genfis1 relies upon grid partitioning it is more susceptible to `the curse of dimensionality'. This suggests that genfis1 would struggle with the planar RRR arm and even more so with the full Lynxmotion Arm. Also, as discussed in Section \ref{sec:GA}, the results of the genetic algorithm were not ideal and so genfis2 could perform much better than witnessed. Thus genfis2 is the method to be carried forwards to the planar RRR problem. 
+
+\section{Planar RRR Arm}
+
+This section will deal with the planar RRR arm problem as described in Figure.\ref{fig:3Link}. As there is now an additional joint angle to find, a new input variable is needed and this will be the pitch of the arm.
+\begin{figure} 
+\begin{center}
+\includegraphics{3Link.jpg}
+\caption{Planar RRR Robotic Arm \label{fig:3Link}}
+\end{center}
+\end{figure}
+
+\subsection{Experiments with Radii Values}
+In order to determine suitable radii values for constructing the FIS structure for $\theta_4$, and whether to use the radii values found for $\theta_2$ and $\theta_3$ in Section \ref{sec:GA} the following options were tested:
+\begin{enumerate}
+\item A control where the radii values were all set to 0.5.
+\item A secondary control where the radii values for $\theta_2$ and $\theta_3$ are kept, and for $\theta_4$ are all set to 0.5.
+\item Keeping the radii values for $\theta_2$ and $\theta_3$ the same and setting $\theta_4$ as a mix of the two.
+\item Keeping the radii values for $\theta_2$, but setting $\theta_4$ to the previous values of $\theta_3$ and $\theta_3$ as a mix of the two. This was based on the thinking that as $\theta_3$ was in fact the new angle to learn, as the planar RR arm had no joint attached to other joints at both ends.
+\end{enumerate}
+The results of these experiments can be seen in Table \ref{tab:situations}.
+
+\begin{table} 
+\begin{center}
+\begin{tabular}{|c | c | c | c | c| c|} 
+\hline
+Situation &   cartRMSE & time & chkRMSE2 & chkRMSE3 & chkRMSE4 \\ \hline \hline
+1 & 24.09 & 2776& 0.0731& 0.0661& 0.0353 \\ \hline
+2 & 13.00 & 1144& 0.0451& 0.0781& 0.0353 \\ \hline
+3 & 00.00 & 0000& 000000& 000000& 000000 \\ \hline % Need to fill in this line!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+4 & 13.02 & 2391& 0.0442& 0.0603& 0.0416 \\ \hline
+\end{tabular}
+\caption{Results for Planar RRR Arm in the Four Situations Specified \label{tab:situations}}
+\end{center}
+\end{table}
+
+
+\subsection{Spread of Training Data} \label{sec:spread}
+
+So far the data points for training and validation have been sampled uniformly across the ranges of the joint angles; however, if the sampling of the data points was concentrated more heavily in the areas producing the most errors, accuracy could be increased. The first step is to identify the regions in the joint space causing the greatest errors in the catesian space. From Figure.\ref{fig:carterrors}, this is identified;
+\begin{itemize}
+\item $\left[\frac{\pi}{2}, \pi\right]$ for $\theta_2$, 
+\item $\left[-1.3, \frac{-\pi}{2}\right]$ for $\theta_3$, 
+\item $\left[\frac{-pi}{4}, \frac{\pi}{2}\right]$ for $\theta_4$.
+\end{itemize}
+
+Unfortunately, as can be seen in Figure.\ref{fig:spread} the accuracy did not improve and did in fact worsen; in the regions with the concentrated sampling the errors hardly improves, whilst in the sparser regions the errors grew. Although disappointing, this is believed to be due the already sparseness of the data points and essentially there not being enough to favour any region and it not seriously hamper the effectiveness in another.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{cartesianerrorsTHETA.jpg}
 \caption{Cartesian RMSE in Joint Space\label{fig:carterrors}}
 \end{figure}
 
+\begin{figure}
+\includegraphics[width=\linewidth]{spreadChange.jpg}
+\caption{Cartesian RMSE in Joint Space after Change of Spread\label{fig:spread}}
+\end{figure}
+
+\subsection{Changing Joint Angle Ranges} %Are these singularities
+
+Another possible method to reduce the Cartesian error is to either remove the troublesome regions identified in Section \ref{sec:spread} or possibly, where they present a boundary to the region, extend the region beyond them in the hopes that performing training either side will reduce the overall error. %grr not written well
+
+JointSpace Reduced and Joint Ranges
+
+
+9.217585601246698 5422 0.016326829669281, 0.045720705451220, 0.014564390880451
 
 \section{Lynxmotion Arm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -220,7 +262,7 @@ dataPoints & Epochs & MFs & trnRMSE2 & chkRMSE2 & trnRMSE3 & chkRMSE3 & cartRMSE
 200 &	500 &	5 &	0.0146 &	0.0146 &	0.0295 &	0.0295 &	1.6488 &	0.0123 &	8.9011 &		816.60 \\ \hline
 200 &	500 &	6 &	0.0114 &	0.0115 &	0.0224 &	0.0226 &	0.8359 &	0.0016 &	6.2123 &		1554.44 \\ \hline
 \end{tabular}}
-\caption{Two Link Arm - Genfis1 Parameter Experiment \label{tab:2LinkGenfis1}}
+\caption{Planar RR Arm - Genfis1 Parameter Experiment \label{tab:2LinkGenfis1}}
 \end{table}
 
 

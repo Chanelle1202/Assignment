@@ -31,14 +31,16 @@ validation_data4 = data4(2:2:end, :);
 %% Training
 
 %Genfis1
-numMFs = 5;
+numMFs = 4;
+
+tic;
 
 input_fismat2 = genfis1(training_data2, numMFs);
 input_fismat3 = genfis1(training_data3, numMFs);
 input_fismat4 = genfis1(training_data4, numMFs);
 
 %ANFIS
-numEpochs = 200;
+numEpochs = 500;
 
 fprintf('-->%s\n','Start training theta2 ANFIS network.')
 [training_fismat2,trnErr2,ss2,validation_fismat2,valErr2]=anfis(training_data2,input_fismat2,numEpochs,[0,0,0,0],validation_data2); % train second ANFIS network
@@ -50,6 +52,7 @@ fprintf('-->%s\n','Start training theta4 ANFIS network.')
 [training_fismat4,trnErr4,ss4,validation_fismat4,valErr4]=anfis(training_data4,input_fismat4,numEpochs,[0,0,0,0],validation_data4); % train fourth ANFIS network
 
 fprintf('-->%s\n','Finished training networks.')
+t=toc;
 %% Checking Errors for Over/Underfitting
 
 % epochs = 1:numEpochs;

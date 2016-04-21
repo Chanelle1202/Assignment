@@ -4,13 +4,17 @@ l1=65; l2=155; l3=160; l5=100;
 
 partitionNum = 50;
 
-% theta2 = linspace(0, pi, partitionNum); % all possible theta2 values
-% theta3 = linspace(-pi/2, 0, partitionNum); %Restricted theta3 values for elbow up configurations
-% theta4 = linspace(-pi/2, 0, partitionNum); %Restricted theta4 values for wrist up configurations
+theta2 = linspace(0, pi, partitionNum); % all possible theta2 values
+theta3 = linspace(-pi/2, 0, partitionNum); %Restricted theta3 values for elbow up configurations
+theta4 = linspace(-pi/2, 0, partitionNum); %Restricted theta4 values for wrist up configurations
 
-theta2 = [linspace(0, pi/2, partitionNum*0.4), linspace(pi/2, pi, partitionNum*0.6)];
-theta3 = [linspace(0, -0.3, partitionNum*0.3), linspace(-0.3, -1.3, partitionNum*0.2), linspace(-1.3, -pi/2,partitionNum*0.5)];
-theta4 = [linspace(0, -pi/4, partitionNum*0.46), linspace(-pi/4, -pi/2, partitionNum*0.54)];
+% theta2 = linspace(0, 3*pi/4, partitionNum); % all possible theta2 values
+% theta3 = linspace(-3*pi/4, -pi/6, partitionNum); %Restricted theta3 values for elbow up configurations
+% theta4 = linspace(-3*pi/4, -pi/6, partitionNum); %Restricted theta4 values for wrist up configurations
+
+% theta2 = [linspace(0, pi/2, partitionNum*0.4), linspace(pi/2, pi, partitionNum*0.6)];
+% theta3 = [linspace(0, -0.3, partitionNum*0.3), linspace(-0.3, -1.3, partitionNum*0.2), linspace(-1.3, -pi/2,partitionNum*0.5)];
+% theta4 = [linspace(0, -pi/4, partitionNum*0.46), linspace(-pi/4, -pi/2, partitionNum*0.54)];
 
 
 [THETA2, THETA3, THETA4] = ndgrid(theta2, theta3, theta4); % generate a grid of theta values
@@ -35,8 +39,8 @@ validation_data4 = data4(2:2:end, :);
 %% Training
 
 theta2_radii = [0.5, 0.8, 0.5, 0.2];
-theta3_radii = [0.5, 0.7, 0.5, 0.3];
-theta4_radii = [0.4, 0.7, 0.5, 0.5];
+theta3_radii = [0.4, 0.7, 0.5, 0.5];
+theta4_radii = [0.5, 0.7, 0.5, 0.3];
 
 tic;
 
